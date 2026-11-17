@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سكينة - Sakinah</title>
+    <title>تطبيق الخدمات - Talba</title>
     <style>
         html, body {
             margin: 0;
@@ -11,15 +11,76 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            background-color: #0f172a;
         }
         iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
+        /* تصميم زر التثبيت العائم */
+        #install-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: Tahoma, sans-serif;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            display: none; /* مخفي لحين جاهزية المتصفح */
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+        #install-btn:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+        }
     </style>
 </head>
 <body>
-    <iframe src="https://sakinah1.ai.studio/" allowfullscreen></iframe>
+
+    <!-- عرض الموقع الأصلي داخل الصفحة -->
+    <iframe src="https://talba1.ai.studio" allowfullscreen></iframe>
+
+    <!-- زر التثبيت الذي سيظهر للزوار -->
+    <button id="install-btn">📱 تثبيت التطبيق على جهازك</button>
+
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // منع المتصفح من إظهار رسالة التثبيت التلقائية الافتراضية
+            e.preventDefault();
+            deferredPrompt = e;
+            // إظهار زر التثبيت الخاص بنا
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // إظهار نافذة التثبيت للعميل
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('المستخدم وافق على التثبيت');
+                }
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installBtn.style.display = 'none';
+            console.log('تم تثبيت التطبيق بنجاح');
+        });
+    </script>
 </body>
 </html>
